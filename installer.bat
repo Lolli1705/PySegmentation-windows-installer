@@ -66,12 +66,6 @@ if not %errorLevel% == 0 (
 :: START OF THE INSTALLATION SCRIPT
 :: ---------------------------------
 
-echo\
-echo This script will install:
-echo - %APP_NAME% (at path %APP_INSTALLATION_DIR%)
-echo - Python %PYTHON_VERSION% (at path %PYTHON_INSTALLATION_DIR%)
-
-
 
 
 
@@ -98,6 +92,42 @@ exit /b 0
 echo/
 echo Prepare installation
 echo --------------------
+
+::Uninstall PySegmentation python installation from the windows system
+if exist "%PYTHON_INSTALLER%" (
+	echo [INFO] - Uninstalling old %APP_NAME% python installation...
+	"%PYTHON_INSTALLER%" /uninstall /quiet > nul 2>>"%ERRORS_LOG%"
+)
+if exist "%PYTHON_INSTALLER%" (
+	if not %errorlevel% == 0 (
+		echo [ FAIL ] - Failed to uninstall old python version
+		exit /b %errorlevel%
+	)
+)
+
+::Remove PySegmentation link to desktop
+if exist "%PYSEG_LAUNCHER_LINK%" (
+	echo [INFO] - Removing old %APP_NAME% link from Desktop...
+	del "%PYSEG_LAUNCHER_LINK%" > nul 2>>"%ERRORS_LOG%"
+)
+if exist "%PYSEG_LAUNCHER_LINK%" (
+	if not %errorlevel% == 0 (
+		echo [ FAIL ] - Failed to remove %APP_NAME% link from Desktop
+		exit /b %errorlevel%
+	)
+)
+
+::Remove PySegmentation installation folder
+if exist "%PYSEG_INSTALLATION_DIR%" (
+	echo [INFO] - Removing old %APP_NAME% installation...
+	rmdir /q/s "%PYSEG_INSTALLATION_DIR%" > nul 2>>"%ERRORS_LOG%"
+)
+if exist "%PYSEG_INSTALLATION_DIR%" (
+	if not %errorlevel% == 0 (
+		echo [ FAIL ] - Failed to remove old %APP_NAME% installation folder
+		exit /b %errorlevel%
+	)
+)
 
 ::Create PySegmentation installation folder
 echo [INFO] - Creating %APP_NAME% installation folder...
